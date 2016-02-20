@@ -3,6 +3,9 @@
  */
 
 var Header = React.createClass({
+    getInitialState(){
+      return {percentage:0};
+    },
     render: function() {
 
         var style = {
@@ -62,6 +65,11 @@ var Header = React.createClass({
                 </div>
             </div>
         );
+    },
+    componentDidMount(){
+        window.percentageChanged = function(perc){
+          this.setState({percentage : perc});
+        };
     }
 });
 
@@ -79,24 +87,33 @@ var Episode = React.createClass({
             border:"1px solid " + (this.state.hovering ? this.props.color : "lightgray"),
             borderRadius:"5px",
             marginTop:"10px",
-            marginLeft:this.state.hovering? "15px" : "0px",
+            marginLeft:this.state.hovering? "10px" : "0px",
             position:"relative"
             ,cursor:"pointer",
             opacity : this.props.index-1 < 4 ? "0.5" : "1",
             transition: "margin-left 0.15s"
         };
-        console.log( "1px solid " + (this.state.hovering ? this.props.color : "lightgray"))
 
         return (
             <div onMouseEnter={this.mouseEnter} onMouseLeave={this.mouseLeave} style={style}>
 
                 <h1 style={{color:(this.state.hovering ? this.props.color : "black"),display:"inline-block",lineHeight:"45px",margin:"0px",verticalAlign:"middle",fontFamily:"Helvetica" , fontWeight:"200" ,whiteSpace:"nowrap",overflow:"hidden" , textOverflow:"ellipsis", fontSize:"9pt",position:"absolute",top:"0px",left:"100px",right:"50px",textAlign:"center"}}>{this.props.name}</h1>
-                <h1 style={{color:this.props.color , borderLeft:"1px solid lightgray",paddingLeft:"10px",paddingRight:"10px",display:"inline-block",position:"absolute",right:"0px",lineHeight:"45px",margin:"0px",verticalAlign:"middle",fontFamily:"Helvetica" , fontWeight:"200", fontSize:"12pt"}}>▶</h1>
+                <h1 onClick={this.play} style={{color:this.props.color , borderLeft:"1px solid lightgray",paddingLeft:"10px",paddingRight:"10px",display:"inline-block",position:"absolute",right:"0px",lineHeight:"45px",margin:"0px",verticalAlign:"middle",fontFamily:"Helvetica" , fontWeight:"200", fontSize:"12pt"}}>▶</h1>
                 <h3 style={{background:"rgba(0,0,0,0.015)",textAlign:"center",width:"80px",borderRight:"1px solid "+ (this.state.hovering ? this.props.color : "lightgray"),display:"inline-block",lineHeight:"22px",margin:"0px",verticalAlign:"middle",position:"absolute" , top:"0px",left:"0px" , bottom:"50%",fontFamily:"Helvetica" , fontWeight:"200", fontSize:"9pt",paddingLeft:"10px" ,marginTop:"0px"}}>Episode {this.props.index}</h3>
                 <h3 style={{background:"rgba(0,0,0,0.015)",textAlign:"center",width:"80px",borderRight:"1px solid "+ (this.state.hovering ? this.props.color : "lightgray"),display:"inline-block",lineHeight:"22px",margin:"0px",verticalAlign:"middle",position:"absolute" , top:"50%",left:"0px" , bottom:"0px",fontFamily:"Helvetica" , fontWeight:"200", fontSize:"9pt",paddingLeft:"10px" ,marginTop:"0px"}}>12:33</h3>
 
             </div>
         );
+    },
+    play(){
+        var url = "http://52.49.190.175:8080/episodes/yohto.mp3";
+        window.audio = new Audio(url);
+        window.audio.addEventListener('loadedmetadata', function() {
+            console.log(window.audio.duration);
+            window.audio.addEventListener("timeupdate" , function(data){console.log(window.audio.currentTime);});
+            window.audio.play();
+        });
+
     },
     mouseEnter:function(){
         this.setState({hovering:true});
