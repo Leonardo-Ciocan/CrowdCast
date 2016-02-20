@@ -13,14 +13,14 @@
   "content_scripts": [
     {
       "matches": ["https://www.reddit.com/*", "https://www.reddit.com/*"],
-      "js": ["content.js"]
+      "js": ["background.js"],
+      "run_at": "document_idle"
     }
   ],
 
   "permissions": [
     "activeTab",
     "tabs",
-    "https://www.reddit.com/*", "https://www.reddit.com/*",
-    "http://www.rikker.tk/*"
+    "https://www.reddit.com/*", "https://www.reddit.com/*"
   ]
 }
