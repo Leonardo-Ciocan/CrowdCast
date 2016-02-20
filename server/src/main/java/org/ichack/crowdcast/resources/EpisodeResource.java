@@ -52,7 +52,10 @@ public class EpisodeResource {
         if (null == episode) {
             return Response.status(404).build();
         }
-        return Response.ok(episode).build();
+        return Response
+                .ok(episode)
+                .header("Access-Control-Allow-Origin", "*")
+                .build();
     }
 
     @POST
@@ -77,7 +80,10 @@ public class EpisodeResource {
         if (null == episode) {
             return Response.status(500).build();
         }
-        return Response.ok(episode).build();
+        return Response
+                .ok(episode)
+                .header("Access-Control-Allow-Origin", "*")
+                .build();
     }
 
 }
