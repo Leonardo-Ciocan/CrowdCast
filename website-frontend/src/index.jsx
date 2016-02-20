@@ -77,7 +77,8 @@ var Episode = React.createClass({
             borderRadius:"5px",
             marginTop:"10px",
             position:"relative"
-            ,cursor:"pointer"
+            ,cursor:"pointer",
+            opacity : this.props.index-1 < 4 ? "0.5" : "1"
         };
 
         return (
@@ -95,7 +96,7 @@ var Episode = React.createClass({
 
 var MainPage = React.createClass({
     getInitialState:function(){
-      return {items : this.props.items , selected : 0}
+      return {items : this.props.items , selected : [0,0]}
     },
     render: function() {
 
@@ -105,7 +106,7 @@ var MainPage = React.createClass({
             bottom:"0px",
             right:"0px",
             position:"absolute",
-            padding:"10px"
+            padding:"20px"
         };
 
         var leftStyle = {
@@ -123,9 +124,17 @@ var MainPage = React.createClass({
         var items = (this.state.items || this.props.items).map((item,index) => <Episode index={index+1} name={item} color={this.props.color}/>);
 
         var menuItems = this.props.menuItems.map(
-            (item,index) =>  {
+            (itemX , indexX) => {
+                var subitems = itemX.data.map((item, index) => {
+                    return <h3
+                        onClick={function(){this.setState({selected:[index,indexX]});this.changeSubreddit(item)}.bind(this)}
+                        style={{cursor:"pointer", color: index == this.state.selected[0] && this.state.selected[1] == indexX ? this.props.color :"black", textAlign:"center", fontFamily:"Helvetica" , fontWeight:"200", fontSize:"12pt",marginLeft:"20px" ,marginTop:"30px"}}>{item}</h3>;
+                });
 
-                return <h3 onClick={function(){this.setState({selected:index});this.changeSubreddit(item)}.bind(this)} style={{cursor:"pointer", color: index == this.state.selected ? this.props.color :"black", textAlign:"center", fontFamily:"Helvetica" , fontWeight:"200", fontSize:"12pt",marginLeft:"20px" ,marginTop:"30px"}}>{item}</h3>;
+                return <div style={{borderTop:"1px solid lightgray"}}>
+                    <h3 style={{cursor:"pointer" ,color:"gray", textAlign:"center", fontFamily:"Helvetica" , fontWeight:"bold", fontSize:"14pt",marginLeft:"20px" ,marginTop:"30px"}}>{itemX.name}</h3>
+                    {subitems}
+                </div>
             }
         );
 
@@ -138,8 +147,8 @@ var MainPage = React.createClass({
                     </div>
                     <div style={style}>
                         <Header color={this.props.color}/>
-                        <div style={{marginTop:"70px"}}>
-                            <h1 style={{textAlign:"center", fontFamily:"Helvetica" , fontWeight:"200", fontSize:"25pt",margin:"10px" ,marginBottom:"5px"}}>/r/Writing prompt</h1>
+                        <div style={{marginTop:"60px"}}>
+                            <h1 style={{textAlign:"center", fontFamily:"Helvetica" , fontWeight:"200", fontSize:"25pt",margin:"10px" ,marginBottom:"5px"}}>{this.props.menuItems[this.state.selected[1]].data[this.state.selected[0]]}</h1>
                             <h3 style={{textAlign:"center",fontFamily:"Helvetica" , fontWeight:"200", fontSize:"15pt",marginLeft:"10px" ,marginTop:"0px"}}>{this.props.items.length} episodes</h3>
                         </div>
 
@@ -176,7 +185,8 @@ $.get(url , function(data){
 
 
     ReactDOM.render(
-        <MainPage color="orange" items={names}  menuItems={["WritingPrompts","HistoryWhatIf" , "creepy" , "nosleep" , "shittyaskreddit"]}/>,
+        <MainPage color="dodgerblue" items={names}  menuItems={[{name:"REDDIT",data:["WritingPrompts","HistoryWhatIf" , "creepy" , "nosleep" , "shittyaskreddit"]} ,
+                {name:"TECH" , data:["The Verge" , "Hacker News" , "FB Developer blog"]}]}/>,
         document.getElementById('root')
     );
 });
