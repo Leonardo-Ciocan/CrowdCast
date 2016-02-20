@@ -39,8 +39,21 @@ var Header = React.createClass({
             borderRight:"1px solid rgba(0,0,0,0.07)"
         };
 
+        var nameStyle = {
+          position:"absolute",
+            right:"10px",
+            top:"0px",
+            lineHeight:"55px",
+            verticalAlign:"middle", fontFamily:"Helvetica" ,
+            fontWeight:"200", fontSize:"12pt",
+            margin:"0px"
+
+        };
+
         return (
             <div style={style}>
+                <h1 style={nameStyle}>Leonardo Ciocan</h1>
+
                 <div style={centerStyle}>
                     <div style={progress}></div>
 
@@ -64,6 +77,7 @@ var Episode = React.createClass({
             borderRadius:"5px",
             marginTop:"10px",
             position:"relative"
+            ,cursor:"pointer"
         };
 
         return (
@@ -81,7 +95,7 @@ var Episode = React.createClass({
 
 var MainPage = React.createClass({
     getInitialState:function(){
-      return {items : this.props.items}
+      return {items : this.props.items , selected : 0}
     },
     render: function() {
 
@@ -111,7 +125,7 @@ var MainPage = React.createClass({
         var menuItems = this.props.menuItems.map(
             (item,index) =>  {
 
-                return <h3 onClick={function(){this.changeSubreddit(item)}.bind(this)} style={{ color: index == 0 ? this.props.color :"black", textAlign:"center", fontFamily:"Helvetica" , fontWeight:"200", fontSize:"12pt",marginLeft:"20px" ,marginTop:"30px"}}>{item}</h3>;
+                return <h3 onClick={function(){this.setState({selected:index});this.changeSubreddit(item)}.bind(this)} style={{cursor:"pointer", color: index == this.state.selected ? this.props.color :"black", textAlign:"center", fontFamily:"Helvetica" , fontWeight:"200", fontSize:"12pt",marginLeft:"20px" ,marginTop:"30px"}}>{item}</h3>;
             }
         );
 
@@ -126,7 +140,7 @@ var MainPage = React.createClass({
                         <Header color={this.props.color}/>
                         <div style={{marginTop:"70px"}}>
                             <h1 style={{textAlign:"center", fontFamily:"Helvetica" , fontWeight:"200", fontSize:"25pt",margin:"10px" ,marginBottom:"5px"}}>/r/Writing prompt</h1>
-                            <h3 style={{textAlign:"center",fontFamily:"Helvetica" , fontWeight:"200", fontSize:"15pt",marginLeft:"10px" ,marginTop:"0px"}}>128 episodes</h3>
+                            <h3 style={{textAlign:"center",fontFamily:"Helvetica" , fontWeight:"200", fontSize:"15pt",marginLeft:"10px" ,marginTop:"0px"}}>{this.props.items.length} episodes</h3>
                         </div>
 
                         {items}
@@ -138,7 +152,7 @@ var MainPage = React.createClass({
     }
     ,
     changeSubreddit(newSubrredit){
-        $.get("https://www.reddit.com/r/"+newSubrredit+"/top.json?limit=15" , function(data){
+        $.get("https://www.reddit.com/r/"+newSubrredit+"/top.json?sort=top&t=all&limit=15" , function(data){
             names = data.data.children.map(function(child){
                 return child.data.title;
             });
