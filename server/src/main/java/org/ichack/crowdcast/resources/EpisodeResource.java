@@ -29,5 +29,4 @@ public class EpisodeResource {
         }
         return Response.ok(episode).build();
     }
-    
 }
