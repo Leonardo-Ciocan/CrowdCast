@@ -4,3 +4,7 @@ server:
   connector:
     type: http
     port: 8080
+
+assets:
+  overrides:
+    /episodes: src/main/resources/episodes/

@@ -1,4 +1,4 @@
-package org.ichack.crowdcast;
+package org.ichack.crowdcast.resources;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
