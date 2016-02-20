@@ -6,9 +6,11 @@ import io.dropwizard.db.DataSourceFactory;
 import io.dropwizard.hibernate.HibernateBundle;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
+import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.ichack.crowdcast.model.Episode;
 import org.ichack.crowdcast.persistence.EpisodeDAO;
 import org.ichack.crowdcast.resources.EpisodeResource;
+import org.ichack.crowdcast.resources.TestResource;
 
 public class CrowdcastApplication extends Application<CrowdcastConfiguration>{
 
@@ -27,9 +29,12 @@ public class CrowdcastApplication extends Application<CrowdcastConfiguration>{
 
     @Override
     public void run(CrowdcastConfiguration configuration, Environment environment) throws Exception {
+        environment.jersey().register(MultiPartFeature.class);
         final EpisodeDAO episodeDAO = new EpisodeDAO(hibernateBundle.getSessionFactory());
         final EpisodeResource episodeResource = new EpisodeResource(episodeDAO);
         environment.jersey().register(episodeResource);
+        final TestResource testResource = new TestResource();
+        environment.jersey().register(testResource);
     }
 
     public static void main(String[] args) throws Exception {

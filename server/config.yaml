@@ -22,5 +22,5 @@ database:
       checkConnectionWhileIdle: false
       checkConnectionHealthWhenIdleFor: 10s
       closeConnectionIfIdleFor: 1 minute
-      hibernate.hbm2ddl.auto: create
+      hibernate.hbm2ddl.auto: update
       currentSessionContextClass: thread
