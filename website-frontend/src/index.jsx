@@ -80,6 +80,9 @@ var Episode = React.createClass({
 });
 
 var MainPage = React.createClass({
+    getInitialState:function(){
+      return {items : this.props.items}
+    },
     render: function() {
 
         var style = {
@@ -103,10 +106,13 @@ var MainPage = React.createClass({
             paddingTop:"10px"
         };
 
-        var items = this.props.items.map((item,index) => <Episode index={index+1} name={item} color={this.props.color}/>);
+        var items = (this.state.items || this.props.items).map((item,index) => <Episode index={index+1} name={item} color={this.props.color}/>);
 
         var menuItems = this.props.menuItems.map(
-            (item,index) =>  <h3 style={{ color: index == 0 ? this.props.color :"black", textAlign:"center", fontFamily:"Helvetica" , fontWeight:"200", fontSize:"12pt",marginLeft:"20px" ,marginTop:"30px"}}>{item}</h3>
+            (item,index) =>  {
+
+                return <h3 onClick={function(){this.changeSubreddit(item)}.bind(this)} style={{ color: index == 0 ? this.props.color :"black", textAlign:"center", fontFamily:"Helvetica" , fontWeight:"200", fontSize:"12pt",marginLeft:"20px" ,marginTop:"30px"}}>{item}</h3>;
+            }
         );
 
         return (
@@ -130,9 +136,22 @@ var MainPage = React.createClass({
                 </div>
         );
     }
+    ,
+    changeSubreddit(newSubrredit){
+        $.get("https://www.reddit.com/r/"+newSubrredit+"/top.json?limit=15" , function(data){
+            names = data.data.children.map(function(child){
+                return child.data.title;
+            });
+
+
+
+            this.setState({items : names})
+        }.bind(this));
+    }
 });
 
-var url ="https://www.reddit.com/r/WritingPrompts/top.json?limit=5";
+
+var url ="https://www.reddit.com/r/WritingPrompts/top.json?limit=15";
 
 var names = [];
 $.get(url , function(data){
@@ -143,7 +162,7 @@ $.get(url , function(data){
 
 
     ReactDOM.render(
-        <MainPage color="orange" items={names}  menuItems={["/r/WritingPrompt","/r/WhatIfHistory" , "/r/creepy" , "/r/SomeSubreddit"]}/>,
+        <MainPage color="orange" items={names}  menuItems={["WritingPrompts","HistoryWhatIf" , "creepy" , "nosleep" , "shittyaskreddit"]}/>,
         document.getElementById('root')
     );
 });
