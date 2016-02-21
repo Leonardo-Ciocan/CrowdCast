@@ -56,10 +56,11 @@ public class JobResource {
 
         try {
             Process process = new ProcessBuilder(PYTHON_INTERPRETER, PYTHON_TEXT_TO_SPEECH, "--job", jsonFile.getAbsolutePath()).start();
-            if (process.exitValue() != 0) {
-                return Response.status(500).entity("Python script exited with status " + process.exitValue()).header("Access-Control-Allow-Origin", "*").build();
+            int exitValue = process.waitFor();
+            if (exitValue != 0) {
+                return Response.status(500).entity("Python script exited with status " + exitValue).header("Access-Control-Allow-Origin", "*").build();
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             return Response.status(500).entity(e.getMessage()).header("Access-Control-Allow-Origin", "*").build();
         }
 
