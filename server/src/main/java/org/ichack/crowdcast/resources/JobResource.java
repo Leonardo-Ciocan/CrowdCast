@@ -3,10 +3,7 @@ package org.ichack.crowdcast.resources;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.ichack.crowdcast.model.Job;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.*;
@@ -20,6 +17,7 @@ public class JobResource {
     private static final String PYTHON_TEXT_TO_SPEECH = "/home/ubuntu/crowdcast/text2speech/askWatson.py";
 
     @POST
+    @OPTIONS
     @Consumes(MediaType.APPLICATION_JSON)
     public Response synthesizeText(Job job) {
         ObjectMapper mapper = new ObjectMapper();
