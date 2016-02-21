@@ -9,10 +9,10 @@ function pad2(number) {
 
 var Header = React.createClass({
     getInitialState(){
-      return {percentage:0 , current:"" , duration : "" , title:"" , playing:this.props.playing};
+      return {percentage:0 , current:"" , duration : "" , title:""};
     },
     componentWillReceiveProps(nprops){
-        this.setState({playing:nprops.playing})
+        //this.setState({playing:nprops.playing})
     },
     render: function() {
 
@@ -70,6 +70,7 @@ var Header = React.createClass({
             width:"300px"
         };
 
+
         return (
             <div style={style}>
                 <h1 style={nameStyle}>Leonardo Ciocan</h1>
@@ -93,11 +94,15 @@ var Header = React.createClass({
     },
     componentDidMount(){
         window.percentageChanged = function(current,duration){
-            console.log("duration: " + duration);
           this.setState({percentage : current/duration , current: pad2(Math.floor(current/60)) + ":" + pad2(Math.floor(current % 60))
                         , duration: pad2(Math.floor(duration/60)) + ":" + pad2(Math.floor(duration % 60))
               ,title:window.subreddit + " - Episode " + (window.episode+1)
           });
+        }.bind(this);
+
+        window.playingChanged = function(pl){
+            this.setState({playing:pl});
+            window.playingChanged2(pl);
         }.bind(this);
     },
     pause(){
@@ -107,7 +112,9 @@ var Header = React.createClass({
         else{
             window.audio.play();
         }
-        this.setState({playing:!this.state.playing});
+        var f = !this.state.playing;
+        this.props.onChangePlaying(f);
+        //this.setState({playing:f});
     }
 });
 
@@ -158,7 +165,7 @@ var Episode = React.createClass({
 
 var MainPage = React.createClass({
     getInitialState:function(){
-      return {items : this.props.items , selected : [0,0] , text:"" , comments:[]}
+      return {items : this.props.items , selected : [0,0] , text:"" , comments:[] , playing:false , playing2:true}
     },
     render: function() {
 
@@ -239,8 +246,9 @@ var MainPage = React.createClass({
         return (
                 <div>
                     <div style={leftStyle}>
+                        <img src={(!this.state.playing) ? "./reddit-alien-sleeping.png" : "./reddit-alien.png"} width="150" style={{display:"block" , marginLeft:"auto" , marginRight:"auto"}}/>
                         <h3 style={{color:"gray" , textAlign:"center", fontFamily:"Helvetica" , fontWeight:"bold",
-                         fontSize:"18pt",marginLeft:"10px" ,marginTop:"20px"}}>PODCASTS</h3>
+                         fontSize:"18pt",marginLeft:"10px" ,marginTop:"20px"}}>CROWDCASTS</h3>
 
                         {menuItems}
                     </div>
@@ -254,7 +262,7 @@ var MainPage = React.createClass({
                         fontWeight:"200", fontSize:"10pt",marginLeft:"10px" ,marginTop:"20px"}}>{ window.selected != undefined ?this.state.items[window.selected].text : ""}</h3>
                         {comments}
                     </div>
-                    <Header playing={this.state.playing} color={this.props.color}/>
+                    <Header onChangePlaying={this.changePlaying} color={this.props.color}/>
 
                     <div style={style}>
                         <div>
@@ -273,6 +281,9 @@ var MainPage = React.createClass({
         );
     }
     ,
+    changePlaying(pl){
+        window.playingChanged(pl);
+    },
     changeSubreddit(newSubrredit){
         $.get("https://www.reddit.com/r/"+newSubrredit+"/top.json?sort=top&t=all&limit=15" , function(data){
             names = data.data.children.map(function(child){
@@ -286,7 +297,6 @@ var MainPage = React.createClass({
     },
     onPlay(item,index){
         window.episode = index;
-        console.log(item);
         var xurl = "http://52.49.190.175:8080/episode/" + item.url.replace("https://" , "").replace(/\//g, '').replace(/\?/g,"");
 
         $.ajax({
@@ -296,21 +306,23 @@ var MainPage = React.createClass({
             type: 'GET',
             success:function(data){
                 var url = "http://52.49.190.175:8080/episodes/" + data.episodeFile;
+                if(window.audio != undefined) {
+                    window.audio.pause();
+                    window.audio.currentTime = 0;
+                };
                 window.audio = new Audio();
                 //window.audio.preload = "none";
                 window.audio.src = url;
-                console.log(parseFloat(data.duration)/1000);
                 //window.audio.load();
                 window.audio.addEventListener('loadedmetadata', function() {
-                    console.log(window.audio.duration);
                     window.audio.addEventListener("timeupdate" ,
                         function(qqqdata){
                             //console.log(window.audio.duration);
-                            window.percentageChanged(window.audio.currentTime , parseFloat(data.duration) / 1000);
+                            window.percentageChanged(window.audio.currentTime , parseFloat(data.duration) / 500.0);
                         });
                     window.audio.play();
 
-                    this.setState({playing : true});
+                    window.playingChanged(true);
                 }.bind(this));
             }.bind(this),
             error:function(){
@@ -332,15 +344,14 @@ var MainPage = React.createClass({
                         window.audio.src = url;
                         //window.audio.load();
                         window.audio.addEventListener('loadedmetadata', function() {
-                            console.log(window.audio.duration);
 
                             window.audio.addEventListener("timeupdate" ,
                                 function(qqqdata){
                                     //console.log(window.audio.duration);
-                                    window.percentageChanged(window.audio.currentTime ,  parseFloat(data.duration) / 1000);
+                                    window.percentageChanged(window.audio.currentTime ,  parseFloat(data.duration) / 500.0);
                                 });
                             window.audio.play();
-                            this.setState({playing : true});
+                            window.playingChanged(true);
 
                         }.bind(this));
                     }
@@ -359,6 +370,11 @@ var MainPage = React.createClass({
                 this.setState({comments:children , items : this.state.items});
             }.bind(this)
         );
+    },
+    componentDidMount(){
+        window.playingChanged2 = function(pl){
+            this.setState({playing:pl});
+        }.bind(this);
     }
 });
 
