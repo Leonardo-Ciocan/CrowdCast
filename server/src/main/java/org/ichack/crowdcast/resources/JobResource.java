@@ -38,10 +38,11 @@ public class JobResource {
 
         try {
             Process process = new ProcessBuilder(PYTHON_INTERPRETER, PYTHON_TEXT_TO_SPEECH, "--job", jsonFile.getAbsolutePath()).start();
-            if (process.exitValue() != 0) {
-                return Response.status(500).entity("Python script exited with status " + process.exitValue()).build();
+            int exitVal = process.waitFor();
+            if (exitVal != 0) {
+                return Response.status(500).entity("Python script exited with status " + exitVal).build();
             }
-        } catch (IOException e) {
+        } catch (IOException | InterruptedException e) {
             return Response.status(500).entity(e.getMessage()).build();
         }
 
