@@ -2,7 +2,7 @@ import os
 import requests
 from requests.auth import HTTPBasicAuth
 from pydub import AudioSegment
-AudioSegment.converter = r"D:\crowdcast\text2speech\ffmpeg-20160219-git-98a0053-win64-static\bin\ffmpeg.exe"
+# AudioSegment.converter = r"D:\crowdcast\text2speech\ffmpeg-20160219-git-98a0053-win64-static\bin\ffmpeg.exe"
 
 # Authentication for Watson text-to-speech API
 user = "d9f4a442-4b2a-4bd5-910e-fd44dab1065d"
@@ -51,7 +51,7 @@ if __name__ == '__main__':
 		data = json.load(f)
 	assert("text" in data)
 	text = data["text"]
-	mp3file = data["mp3file"] if hasattr(data, "mp3file") else str(uuid.uuid4().get_hex().upper()[0:8]) + ".mp3"
+	mp3file = data["mp3file"] if "mp3file" in data else str(uuid.uuid4().get_hex().upper()[0:8]) + ".mp3"
 	text2mp3(text, mp3file)
 	# Print the absolute path to the mp3 to stdout if everything went well
 	print os.path.abspath(mp3file)
