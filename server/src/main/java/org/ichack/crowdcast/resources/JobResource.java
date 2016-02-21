@@ -16,8 +16,12 @@ public class JobResource {
     private static final String PYTHON_INTERPRETER = "/home/ubuntu/watson/bin/python";
     private static final String PYTHON_TEXT_TO_SPEECH = "/home/ubuntu/crowdcast/text2speech/askWatson.py";
 
-    @POST
     @OPTIONS
+    public Response test() {
+        return Response.ok().build();
+    }
+
+    @POST
     @Consumes(MediaType.APPLICATION_JSON)
     public Response synthesizeText(Job job) {
         ObjectMapper mapper = new ObjectMapper();
