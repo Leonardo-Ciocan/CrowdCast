@@ -24,3 +24,13 @@ Any calls to /episodes/{x} will return the file x if x exists
 $ curl -X GET \
 		http://localhost:8080/episodes/f8966531-6a40-4757-af90-f3635f95d4ed.mp3
 ```
+
+## Synthesize text
+Ask server to run external Python script that queries the Watson API to convert text into an mp3 audio file. The file will be stored in the web servers assets directory and can be downloaded from /episodes/ analogous to the call above.
+```
+$ curl	-X POST \
+		-H "Content-Type: application/json" \
+		-d "{\"text\": \"All your base belong to us.\"}" \
+		http://52.49.190.175:8080/job
+d4f108d3-1c4f-4bb4-a2d5-c9771300156e.mp3
+```
