@@ -1,14 +1,57 @@
-// only inject on subreddit pages
-var pos = document.location.pathname;
+// load jquery (super hacky) TODO
 
-if (/^(\/|)r\/[a-zA-Z0-9]*(\/|)$/.test(pos)) {
-  //  create element to be inserted
-  var node = document.createElement('div');
-  node.style.position = 'fixed';
-  node.style.top = 0;
-  node.style.left = 0;
-  node.textContent = 'Injection!';
+
+function loadScript(url, callback) {
+  // Adding the script tag to the head 
+  var head = document.getElementsByTagName('head')[0];
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src = url;
   
-  document.body.appendChild(node);
+  // Then bind the event to the callback function.
+  // There are several events for cross browser compatibility.
+  script.onreadystatechange = callback;
+  script.onload = callback;
+  // Fire the loading
+  head.appendChild(script);
 }
 
+function existsAtServer(url) {
+  // make ajax query to server. 202 found, 404 not found
+  return true;
+}
+
+function main() {
+  // only inject on subreddit pages
+  var pos = document.location.pathname;
+    
+  if (/^(\/|)r\/[a-zA-Z0-9]*(\/|)$/.test(pos)) {
+    // jquery all title elements
+    var ps = $( 'p' );
+    var titles = ps.filter( '.title' );
+
+    // get href from each 'a' element in class.
+    titles.each(function() {
+      var children = $(this).children();
+      var links = children.filter( 'a' );
+      var url = links.attr("href");
+      
+      if (exsistsAtServer(url)) {
+        annotateElement(link);
+      }
+    });
+
+    // create element to be inserted
+  
+    var node = document.createElement('div');
+    node.style.position = 'fixed';
+    node.style.top = 0;
+    node.style.left = 0;
+    node.textContent = 'Injection!';
+    
+    document.body.appendChild(node);
+  }
+}
+
+
+loadScript('https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js', main);

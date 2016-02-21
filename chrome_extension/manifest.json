@@ -12,8 +12,14 @@
 
   "content_scripts": [
     {
-      "matches": ["https://www.reddit.com/*", "https://www.reddit.com/*"],
-      "js": ["content.js"],
+      "matches": [
+        "https://www.reddit.com/*", 
+        "https://www.reddit.com/*"
+      ],
+      "js": [
+        "content.js",
+        "js/jquery.min.js"
+      ],
       "run_at": "document_idle"
     }
   ],
