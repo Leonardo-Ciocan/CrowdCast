@@ -221,12 +221,12 @@ var MainPage = React.createClass({
                             <span  onClick={function(){this.onPlay(comment,index)}.bind(this)} style={{ cursor:"pointer",float:"right",textAlign:"right" ,lineHeight:"45px",verticalAlign:"middle", color:this.props.color}}>Play this episode ▶</span>
 
                         </div>
-                        <div dangerouslySetInnerHTML={{__html:comment.html.replace(/&amp;/g, "&")
-        .replace(/&lt;/g, "<")
-        .replace(/&gt;/g, ">")
-        .replace(/&quot;/g, "\"")
-        .replace(/&#039;/g, "'")}}>
-                    </div>
+                                <div dangerouslySetInnerHTML={{__html:comment.html.replace(/&amp;/g, "&")
+                .replace(/&lt;/g, "<")
+                .replace(/&gt;/g, ">")
+                .replace(/&quot;/g, "\"")
+                .replace(/&#039;/g, "'")}}>
+                            </div>
                        </div>
             }
         );
@@ -306,7 +306,42 @@ var MainPage = React.createClass({
                         });
                     window.audio.play();
                 });
-            }
+            },
+            error:function(){
+                var jobUrl = "http://52.49.190.175:8080/job/";
+                var txt = JSON.stringify({text:item.text.split("\n")[0]});
+
+                $.ajax({
+                    url:jobUrl,
+                    type:"POST",
+                    data:txt,
+                    contentType:"application/json; charset=utf-8",
+                    dataType:"json",
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                    success: function (data) {
+                        console.log(data);
+                        var url = "http://52.49.190.175:8080/episodes/" + data;
+                        window.audio = new Audio();
+                        //window.audio.preload = "none";
+                        window.audio.src = url;
+                        //window.audio.load();
+                        window.audio.addEventListener('loadedmetadata', function() {
+                            console.log(window.audio.duration);
+
+                            window.audio.addEventListener("timeupdate" ,
+                                function(data){
+                                    //console.log(window.audio.duration);
+                                    window.percentageChanged(window.audio.currentTime , window.audio.duration);
+                                });
+                            window.audio.play();
+                        });
+                    }
+                });
+
+            }.bind(this)
 
         });
     },
@@ -315,7 +350,7 @@ var MainPage = React.createClass({
         $.get(
             this.props.items[index].url + ".json",
             function(data){
-                var children = (data[1].data.children.slice(0,10).map((child) =>{return {html:child.data.body_html , url:"https://www.reddit.com/api/info.json?id=t1_" + child.data.id};}));
+                var children = (data[1].data.children.slice(0,10).map((child) =>{return {text:child.data.body , html:child.data.body_html , url:"https://www.reddit.com/api/info.json?id=t1_" + child.data.id};}));
                 this.setState({comments:children , items : this.state.items});
             }.bind(this)
         );
