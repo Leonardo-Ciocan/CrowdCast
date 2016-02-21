@@ -1,6 +1,4 @@
 // load jquery (super hacky) TODO
-
-
 function loadScript(url, callback) {
   // Adding the script tag to the head 
   var head = document.getElementsByTagName('head')[0];
@@ -16,8 +14,13 @@ function loadScript(url, callback) {
   head.appendChild(script);
 }
 
-function existsAtServer(url) {
+function existsAtServer(relurl) {
+  // transform relative url to filtered fullurl
+  var fullurl = "www.reddit.com" + relurl;
+  var filtered = fullurl.replace('/', '');
+  filtered = filtered.replace(':', '');
   // make ajax query to server. 202 found, 404 not found
+  
   return 'http://example.com/';
   // return null on not-extist
 }
