@@ -1,5 +1,6 @@
 package org.ichack.crowdcast.model;
 
+import org.ichack.crowdcast.resources.EpisodeResource;
 import org.tritonus.share.sampled.file.TAudioFileFormat;
 
 import javax.persistence.Column;
@@ -57,7 +58,7 @@ public class Episode {
     }
 
     public void setDurationFromFile() throws IOException, UnsupportedAudioFileException {
-        File file = new File(this.getEpisodeFile());
+        File file = new File(EpisodeResource.resourcePath + "/" + this.getEpisodeFile());
         AudioFileFormat fileFormat = AudioSystem.getAudioFileFormat(file);
         Map<?, ?> properties = ((TAudioFileFormat) fileFormat).properties();
         String key = "duration";
