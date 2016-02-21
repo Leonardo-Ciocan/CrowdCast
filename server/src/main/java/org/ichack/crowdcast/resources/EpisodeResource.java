@@ -40,7 +40,7 @@ public class EpisodeResource {
         } else if (websiteUrl.startsWith("https")) {
             websiteUrl = websiteUrl.substring(6);
         }
-        websiteUrl = websiteUrl.replace(":", "").replace("/", "");
+        websiteUrl = websiteUrl.replace(":", "").replace("/", "").replace("?", "");
         return websiteUrl;
     }
 
