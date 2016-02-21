@@ -33,7 +33,7 @@ public class JobResource {
         try {
             mapper.writeValue(jsonFile, job);
         } catch (Exception e) {
-            return Response.status(500).entity(e.getMessage()).build();
+            return Response.status(500).entity(e.getMessage()).header("Access-Control-Allow-Origin", "*").build();
         }
 
         try {
@@ -46,14 +46,14 @@ public class JobResource {
                 System.out.println(line);
             int exitVal = process.waitFor();
             if (exitVal != 0) {
-                return Response.status(500).entity("Python script exited with status " + exitVal).build();
+                return Response.status(500).entity("Python script exited with status " + exitVal).header("Access-Control-Allow-Origin", "*").build();
             }
         } catch (IOException | InterruptedException e) {
-            return Response.status(500).entity(e.getMessage()).build();
+            return Response.status(500).entity(e.getMessage()).header("Access-Control-Allow-Origin", "*").build();
         }
 
         // Delete temporary job file
         jsonFile.delete();
-        return Response.ok(randId + ".mp3").build();
+        return Response.ok(randId + ".mp3").header("Access-Control-Allow-Origin", "*").build();
     }
 }
