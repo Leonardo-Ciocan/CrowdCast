@@ -9,8 +9,10 @@ import org.ichack.crowdcast.persistence.EpisodeDAO;
 import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import java.io.*;
+import java.util.Map;
 import java.util.UUID;
 
 @Path("/job")
@@ -33,11 +35,11 @@ public class JobResource {
 
     @POST
     //@Consumes(MediaType.APPLICATION_JSON)
-    @Consumes(MediaType.MULTIPART_FORM_DATA)
-    public Response synthesizeText(@FormDataParam("text") String text, @FormDataParam("url") String url){
+    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+    public Response synthesizeText(MultivaluedMap<String,String> multivaluedMap){
         Job job = new Job();
-        job.setText(text);
-        job.setWebsiteUrl(url);
+        job.setText(multivaluedMap.getFirst("text"));
+        job.setWebsiteUrl(multivaluedMap.getFirst("websiteUrl"));
         ObjectMapper mapper = new ObjectMapper();
         String randId = UUID.randomUUID().toString();
         File jsonFile = new File(randId + ".json");
