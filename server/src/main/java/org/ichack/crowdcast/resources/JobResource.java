@@ -1,6 +1,7 @@
 package org.ichack.crowdcast.resources;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.dropwizard.hibernate.UnitOfWork;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 import org.ichack.crowdcast.model.Episode;
 import org.ichack.crowdcast.model.Job;
@@ -36,6 +37,7 @@ public class JobResource {
     @POST
     //@Consumes(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+    @UnitOfWork
     public Response synthesizeText(MultivaluedMap<String,String> multivaluedMap){
         Job job = new Job();
         job.setText(multivaluedMap.getFirst("text"));
