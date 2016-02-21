@@ -6,6 +6,7 @@ import org.glassfish.jersey.media.multipart.FormDataParam;
 import org.ichack.crowdcast.model.Episode;
 import org.ichack.crowdcast.persistence.EpisodeDAO;
 
+import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -76,6 +77,11 @@ public class EpisodeResource {
         Episode episode = new Episode();
         episode.setEpisodeFile(filename);
         episode.setWebsiteUrl(cleanUrl(websiteUrl));
+        try {
+            episode.setDurationFromFile();
+        } catch (IOException | UnsupportedAudioFileException e) {
+            return Response.status(500).entity(e.getMessage()).build();
+        }
         episode = episodeDAO.addOrUpdate(episode);
         if (null == episode) {
             return Response.status(500).build();
