@@ -16,8 +16,8 @@ import java.util.UUID;
 @Produces(MediaType.APPLICATION_JSON)
 public class JobResource {
 
-    private static final String PYTHON_INTERPRETER = "/homes/ubuntu/watson/bin/python";
-    private static final String PYTHON_TEXT_TO_SPEECH = "/homes/ubuntu/crowdcast/text2speech/askWatson.py";
+    private static final String PYTHON_INTERPRETER = "/home/ubuntu/watson/bin/python";
+    private static final String PYTHON_TEXT_TO_SPEECH = "/home/ubuntu/crowdcast/text2speech/askWatson.py";
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)

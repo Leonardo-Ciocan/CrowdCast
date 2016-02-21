@@ -11,7 +11,6 @@ import org.ichack.crowdcast.model.Episode;
 import org.ichack.crowdcast.persistence.EpisodeDAO;
 import org.ichack.crowdcast.resources.EpisodeResource;
 import org.ichack.crowdcast.resources.JobResource;
-import org.ichack.crowdcast.resources.TestResource;
 
 public class CrowdcastApplication extends Application<CrowdcastConfiguration>{
 
