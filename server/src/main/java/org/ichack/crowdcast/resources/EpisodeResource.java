@@ -74,6 +74,11 @@ public class EpisodeResource {
             return Response.status(500).entity(e.getMessage()).build();
         }
 
+        return addEpisode(filename, websiteUrl);
+    }
+
+
+    public Response addEpisode(String filename, String websiteUrl) {
         Episode episode = new Episode();
         episode.setEpisodeFile(filename);
         episode.setWebsiteUrl(cleanUrl(websiteUrl));

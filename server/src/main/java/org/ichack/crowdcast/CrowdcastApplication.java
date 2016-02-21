@@ -10,6 +10,7 @@ import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.ichack.crowdcast.model.Episode;
 import org.ichack.crowdcast.persistence.EpisodeDAO;
 import org.ichack.crowdcast.resources.EpisodeResource;
+import org.ichack.crowdcast.resources.JobResource;
 import org.ichack.crowdcast.resources.TestResource;
 
 public class CrowdcastApplication extends Application<CrowdcastConfiguration>{
@@ -33,8 +34,8 @@ public class CrowdcastApplication extends Application<CrowdcastConfiguration>{
         final EpisodeDAO episodeDAO = new EpisodeDAO(hibernateBundle.getSessionFactory());
         final EpisodeResource episodeResource = new EpisodeResource(episodeDAO);
         environment.jersey().register(episodeResource);
-        final TestResource testResource = new TestResource();
-        environment.jersey().register(testResource);
+        final JobResource jobResource = new JobResource();
+        environment.jersey().register(jobResource);
     }
 
     public static void main(String[] args) throws Exception {
