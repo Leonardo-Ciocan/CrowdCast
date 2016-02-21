@@ -33,7 +33,7 @@ public class CrowdcastApplication extends Application<CrowdcastConfiguration>{
         final EpisodeDAO episodeDAO = new EpisodeDAO(hibernateBundle.getSessionFactory());
         final EpisodeResource episodeResource = new EpisodeResource(episodeDAO);
         environment.jersey().register(episodeResource);
-        final JobResource jobResource = new JobResource();
+        final JobResource jobResource = new JobResource(episodeDAO);
         environment.jersey().register(jobResource);
     }
 
