@@ -6,6 +6,7 @@ import org.glassfish.jersey.media.multipart.FormDataParam;
 import org.ichack.crowdcast.model.Episode;
 import org.ichack.crowdcast.persistence.EpisodeDAO;
 
+import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -39,7 +40,7 @@ public class EpisodeResource {
         } else if (websiteUrl.startsWith("https")) {
             websiteUrl = websiteUrl.substring(6);
         }
-        websiteUrl = websiteUrl.replace(":", "").replace("/", "");
+        websiteUrl = websiteUrl.replace(":", "").replace("/", "").replace("?", "");
         return websiteUrl;
     }
 
@@ -52,7 +53,10 @@ public class EpisodeResource {
         if (null == episode) {
             return Response.status(404).build();
         }
-        return Response.ok(episode).build();
+        return Response
+                .ok(episode)
+                .header("Access-Control-Allow-Origin", "*")
+                .build();
     }
 
     @POST
@@ -70,14 +74,31 @@ public class EpisodeResource {
             return Response.status(500).entity(e.getMessage()).build();
         }
 
+        return addEpisode(filename, websiteUrl);
+    }
+
+
+    public Response addEpisode(String filename, String websiteUrl) {
         Episode episode = new Episode();
         episode.setEpisodeFile(filename);
         episode.setWebsiteUrl(cleanUrl(websiteUrl));
+        try {
+            episode.setDurationFromFile();
+        } catch (IOException | UnsupportedAudioFileException e) {
+            return Response.status(500).entity(e.getMessage()).build();
+        }
+        if (0 == episode.getDuration()) {
+            return Response.status(401).entity("Could not determine duration of uploaded file.").build();
+        }
+
         episode = episodeDAO.addOrUpdate(episode);
         if (null == episode) {
             return Response.status(500).build();
         }
-        return Response.ok(episode).build();
+        return Response
+                .ok(episode)
+                .header("Access-Control-Allow-Origin", "*")
+                .build();
     }
 
 }
