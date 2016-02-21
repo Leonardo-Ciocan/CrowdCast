@@ -9,7 +9,10 @@ function pad2(number) {
 
 var Header = React.createClass({
     getInitialState(){
-      return {percentage:0 , current:"" , duration : "" , title:"" , playing:false};
+      return {percentage:0 , current:"" , duration : "" , title:"" , playing:this.props.playing};
+    },
+    componentWillReceiveProps(nprops){
+        this.setState({playing:nprops.playing})
     },
     render: function() {
 
@@ -90,9 +93,10 @@ var Header = React.createClass({
     },
     componentDidMount(){
         window.percentageChanged = function(current,duration){
+            console.log("duration: " + duration);
           this.setState({percentage : current/duration , current: pad2(Math.floor(current/60)) + ":" + pad2(Math.floor(current % 60))
                         , duration: pad2(Math.floor(duration/60)) + ":" + pad2(Math.floor(duration % 60))
-              ,title:window.subreddit + " - Episode " + (window.episode+1) , playing:true
+              ,title:window.subreddit + " - Episode " + (window.episode+1)
           });
         }.bind(this);
     },
@@ -250,7 +254,7 @@ var MainPage = React.createClass({
                         fontWeight:"200", fontSize:"10pt",marginLeft:"10px" ,marginTop:"20px"}}>{ window.selected != undefined ?this.state.items[window.selected].text : ""}</h3>
                         {comments}
                     </div>
-                    <Header color={this.props.color}/>
+                    <Header playing={this.state.playing} color={this.props.color}/>
 
                     <div style={style}>
                         <div>
@@ -295,35 +299,34 @@ var MainPage = React.createClass({
                 window.audio = new Audio();
                 //window.audio.preload = "none";
                 window.audio.src = url;
+                console.log(parseFloat(data.duration)/1000);
                 //window.audio.load();
                 window.audio.addEventListener('loadedmetadata', function() {
                     console.log(window.audio.duration);
-
                     window.audio.addEventListener("timeupdate" ,
-                        function(data){
+                        function(qqqdata){
                             //console.log(window.audio.duration);
-                            window.percentageChanged(window.audio.currentTime , window.audio.duration);
+                            window.percentageChanged(window.audio.currentTime , parseFloat(data.duration) / 1000);
                         });
                     window.audio.play();
-                });
-            },
+
+                    this.setState({playing : true});
+                }.bind(this));
+            }.bind(this),
             error:function(){
                 var jobUrl = "http://52.49.190.175:8080/job/";
-                var txt = JSON.stringify({text:item.text.split("\n")[0]});
+                var txt = {"text":item.text.slice(0,1000) , websiteUrl: item.url};
 
                 $.ajax({
                     url:jobUrl,
-                    type:"POST",
+                    method:"POST",
                     data:txt,
-                    contentType:"application/json; charset=utf-8",
-                    dataType:"json",
-                    headers: {
-                        'Accept': 'application/json',
-                        'Content-Type': 'application/json'
-                    },
                     success: function (data) {
-                        console.log(data);
-                        var url = "http://52.49.190.175:8080/episodes/" + data;
+                        var url = "http://52.49.190.175:8080/episodes/" + data.episodeFile;
+                        if(window.audio != undefined) {
+                            window.audio.pause();
+                            window.audio.currentTime = 0;
+                        };
                         window.audio = new Audio();
                         //window.audio.preload = "none";
                         window.audio.src = url;
@@ -332,12 +335,14 @@ var MainPage = React.createClass({
                             console.log(window.audio.duration);
 
                             window.audio.addEventListener("timeupdate" ,
-                                function(data){
+                                function(qqqdata){
                                     //console.log(window.audio.duration);
-                                    window.percentageChanged(window.audio.currentTime , window.audio.duration);
+                                    window.percentageChanged(window.audio.currentTime ,  parseFloat(data.duration) / 1000);
                                 });
                             window.audio.play();
-                        });
+                            this.setState({playing : true});
+
+                        }.bind(this));
                     }
                 });
 
