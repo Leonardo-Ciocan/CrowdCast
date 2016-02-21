@@ -33,20 +33,20 @@ public class JobResource {
         try {
             mapper.writeValue(jsonFile, job);
         } catch (Exception e) {
-            return Response.status(500).entity(e.getMessage()).build();
+            return Response.status(500).entity(e.getMessage()).header("Access-Control-Allow-Origin", "*").build();
         }
 
         try {
             Process process = new ProcessBuilder(PYTHON_INTERPRETER, PYTHON_TEXT_TO_SPEECH, "--job", jsonFile.getAbsolutePath()).start();
             if (process.exitValue() != 0) {
-                return Response.status(500).entity("Python script exited with status " + process.exitValue()).build();
+                return Response.status(500).entity("Python script exited with status " + process.exitValue()).header("Access-Control-Allow-Origin", "*").build();
             }
         } catch (IOException e) {
-            return Response.status(500).entity(e.getMessage()).build();
+            return Response.status(500).entity(e.getMessage()).header("Access-Control-Allow-Origin", "*").build();
         }
 
         // Delete temporary job file
         jsonFile.delete();
-        return Response.ok(randId + ".mp3").build();
+        return Response.ok(randId + ".mp3").header("Access-Control-Allow-Origin", "*").build();
     }
 }
