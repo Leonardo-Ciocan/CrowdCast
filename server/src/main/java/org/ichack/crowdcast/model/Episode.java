@@ -1,8 +1,6 @@
 package org.ichack.crowdcast.model;
 
 import org.ichack.crowdcast.resources.EpisodeResource;
-import org.jaudiotagger.audio.AudioFile;
-import org.jaudiotagger.audio.AudioFileIO;
 import org.tritonus.share.sampled.file.TAudioFileFormat;
 
 import javax.persistence.Column;
