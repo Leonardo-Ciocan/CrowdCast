@@ -14,15 +14,26 @@ function loadScript(url, callback) {
   head.appendChild(script);
 }
 
-function existsAtServer(relurl) {
+function existsAtServer(relurl, parentelem) {
   // transform relative url to filtered fullurl
   var fullurl = "www.reddit.com" + relurl;
   var filtered = fullurl.replace('/', '');
   filtered = filtered.replace(':', '');
-  // make ajax query to server. 202 found, 404 not found
-  
-  return 'http://example.com/';
-  // return null on not-extist
+
+  // make ajax query to server.
+  $.ajax({url: filtered, success: function(result) {
+  annotateElem(result, parentelem);
+   }});
+}
+
+function annotateElem(sitelink, parentelem) {
+  jQuery('<a/>', {
+        id: 'foo',
+        href: sitelink,
+        title: 'happy easter',
+        rel: 'external',
+        text: 'Play on CrowdCast'
+  }).appendTo($(parentelem));
 }
 
 function main() {
@@ -38,17 +49,7 @@ function main() {
       var children = $(this).children();
       var links = children.filter( 'a' );
       var url = links.attr("href");
-      var sitelink = existsAtServer(url);
-      if (sitelink) {
-        // annotate elem
-        jQuery('<a/>', {
-              id: 'foo',
-              href: sitelink,
-              title: 'hey :P',
-              rel: 'external',
-              text: 'Play on CrowdCast'
-        }).appendTo($(this));
-      }
+      existsAtServer(url, this);
       return true;
     });
 
