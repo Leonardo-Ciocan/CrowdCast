@@ -19,9 +19,9 @@ function existsAtServer(relurl, parentelem) {
   var fullurl = "www.reddit.com" + relurl;
   var filtered = fullurl.replace('/', '');
   filtered = filtered.replace(':', '');
-
+  filtered = "/episode/" + filtered;
   // make ajax query to server.
-  $.ajax({url: filtered, success: function(result) {
+  $.ajax({url: 'http://52.49.190.175', data: filtered, success: function(result) {
   annotateElem(result, parentelem);
    }});
 }
