@@ -1,0 +1,32 @@
+{
+  "manifest_version": 2,
+  
+  "name": "Crowdcast",
+  "description": "This extension injects play buttons in reddit threads when they are available as audio on CrowdCast",
+  "version": "1.0",
+  
+  "browser_action": {
+    "default_icon": "icon.png",
+    "default_popup": "popup.html"
+  },
+
+  "content_scripts": [
+    {
+      "matches": [
+        "https://www.reddit.com/*", 
+        "https://www.reddit.com/*"
+      ],
+      "js": [
+        "content.js",
+        "js/jquery.min.js"
+      ],
+      "run_at": "document_idle"
+    }
+  ],
+
+  "permissions": [
+    "activeTab",
+    "tabs",
+    "https://www.reddit.com/*", "https://www.reddit.com/*"
+  ]
+}
