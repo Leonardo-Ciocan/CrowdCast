@@ -1,6 +1,7 @@
 package org.ichack.crowdcast.resources;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.glassfish.jersey.media.multipart.FormDataParam;
 import org.ichack.crowdcast.model.Episode;
 import org.ichack.crowdcast.model.Job;
 import org.ichack.crowdcast.persistence.EpisodeDAO;
@@ -31,8 +32,12 @@ public class JobResource {
     }
 
     @POST
-    @Consumes(MediaType.APPLICATION_JSON)
-    public Response synthesizeText(Job job) {
+    //@Consumes(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    public Response synthesizeText(@FormDataParam("text") String text, @FormDataParam("url") String url){
+        Job job = new Job();
+        job.setText(text);
+        job.setWebsiteUrl(url);
         ObjectMapper mapper = new ObjectMapper();
         String randId = UUID.randomUUID().toString();
         File jsonFile = new File(randId + ".json");
