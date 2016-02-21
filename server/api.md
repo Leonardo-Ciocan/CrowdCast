@@ -26,7 +26,7 @@ $ curl -X GET \
 ```
 
 ## Synthesize text
-Ask server to run external Python script that queries the Watson API to convert text into an mp3 audio file. The file will be stored in the web servers assets directory and can be downloaded from /episodes/ analogous to the call above.
+Ask server to run external Python script that queries the Watson API to convert text into an mp3 audio file. The audio file will be stored in the web server's assets directory and can be downloaded from /episodes/ analogous to the call above.
 ```
 $ curl	-X POST \
 		-H "Content-Type: application/json" \
