@@ -9,6 +9,8 @@ public class Job {
 
     private String mp3file;
 
+    private String websiteUrl;
+
     public String getText() {
         return text;
     }
@@ -23,5 +25,13 @@ public class Job {
 
     public void setMp3file(String mp3file) {
         this.mp3file = mp3file;
+    }
+
+    public String getWebsiteUrl() {
+        return websiteUrl;
+    }
+
+    public void setWebsiteUrl(String websiteUrl) {
+        this.websiteUrl = websiteUrl;
     }
 }

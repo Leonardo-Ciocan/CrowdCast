@@ -34,7 +34,7 @@ public class EpisodeResource {
      * @param websiteUrl url to website
      * @return
      */
-    private String cleanUrl(String websiteUrl) {
+    public static String cleanUrl(String websiteUrl) {
         if (websiteUrl.startsWith("http")) {
             websiteUrl = websiteUrl.substring(5);
         } else if (websiteUrl.startsWith("https")) {
@@ -81,7 +81,7 @@ public class EpisodeResource {
     public Response addEpisode(String filename, String websiteUrl) {
         Episode episode = new Episode();
         episode.setEpisodeFile(filename);
-        episode.setWebsiteUrl(cleanUrl(websiteUrl));
+        episode.setWebsiteUrl(EpisodeResource.cleanUrl(websiteUrl));
         try {
             episode.setDurationFromFile();
         } catch (IOException | UnsupportedAudioFileException e) {
