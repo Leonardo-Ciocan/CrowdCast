@@ -9,7 +9,7 @@ function pad2(number) {
 
 var Header = React.createClass({
     getInitialState(){
-      return {percentage:0 , current:"" , duration : "" , title:""};
+      return {percentage:0 , current:"" , duration : "" , title:"" , playing:false};
     },
     render: function() {
 
@@ -59,9 +59,23 @@ var Header = React.createClass({
 
         };
 
+        var leftContainer = {
+          position:"absolute",
+            top:"0px",
+            bottom:"0px",
+            left:"20px",
+            width:"300px"
+        };
+
         return (
             <div style={style}>
                 <h1 style={nameStyle}>Leonardo Ciocan</h1>
+
+                <div style={leftContainer}>
+                    <span className="fa fa-backward" style={{color:"gray",marginLeft:"75px",lineHeight:"55px" , verticalAlign:"middle" , fontSize:"21pt"}}></span>
+                    <span onClick={this.pause} className={this.state.playing ? "fa fa-pause" : "fa fa-play"} style={{color:this.props.color,marginLeft:"25px",lineHeight:"55px" , verticalAlign:"middle" , fontSize:"21pt"}}></span>
+                    <span className="fa fa-forward" style={{color:"gray",marginLeft:"20px",lineHeight:"55px" , verticalAlign:"middle" , fontSize:"21pt"}}></span>
+                </div>
 
                 <div style={centerStyle}>
                     <div style={progress}></div>
@@ -78,9 +92,18 @@ var Header = React.createClass({
         window.percentageChanged = function(current,duration){
           this.setState({percentage : current/duration , current: pad2(Math.floor(current/60)) + ":" + pad2(Math.floor(current % 60))
                         , duration: pad2(Math.floor(duration/60)) + ":" + pad2(Math.floor(duration % 60))
-              ,title:window.subreddit + " • " + window.episode
+              ,title:window.subreddit + " - Episode " + (window.episode+1) , playing:true
           });
         }.bind(this);
+    },
+    pause(){
+        if(this.state.playing){
+            window.audio.pause();
+        }
+        else{
+            window.audio.play();
+        }
+        this.setState({playing:!this.state.playing});
     }
 });
 
@@ -94,11 +117,11 @@ var Episode = React.createClass({
         var style = {
             width:"100%",
             height:"45px",
-            background:this.state.hovering ? this.props.color : "#fafafa",
-            border:"1px solid " + (this.state.hovering ? this.props.color : "lightgray"),
+            background:(this.state.hovering || this.props.highlight) ? this.props.color : "#fafafa",
+            border:"1px solid " + ((this.state.hovering || this.props.highlight) ? this.props.color : "lightgray"),
             borderRadius:"5px",
             marginTop:"10px",
-            marginLeft:this.state.hovering? "5px" : "0px",
+            marginLeft:(this.state.hovering || this.props.highlight)? "5px" : "0px",
             position:"relative"
             ,cursor:"pointer",
             transition: "margin-left 0.15s"
@@ -107,43 +130,15 @@ var Episode = React.createClass({
         return (
             <div onClick={this.itemClicked} onMouseEnter={this.mouseEnter} onMouseLeave={this.mouseLeave} style={style}>
 
-                <h1 style={{color:(this.state.hovering ? "white" : "black"),display:"inline-block",lineHeight:"45px",margin:"0px",verticalAlign:"middle",fontFamily:"Helvetica" , fontWeight:"200" ,whiteSpace:"nowrap",overflow:"hidden" , textOverflow:"ellipsis", fontSize:"9pt",position:"absolute",top:"0px",left:"100px",right:"50px",textAlign:"center"}}>{this.props.name}</h1>
-                <h1 onClick={this.play} style={{color: (!this.state.hovering ? this.props.color : "white") , borderLeft:"1px solid lightgray",paddingLeft:"10px",paddingRight:"10px",display:"inline-block",position:"absolute",right:"0px",lineHeight:"45px",margin:"0px",verticalAlign:"middle",fontFamily:"Helvetica" , fontWeight:"200", fontSize:"12pt"}}>▶</h1>
-                <h3 style={{color:(this.state.hovering ? "white" : "gray"), background:"rgba(0,0,0,0.015)",textAlign:"center",width:"80px",borderRight:"1px solid "+ (this.state.hovering ? "white" : "lightgray"),display:"inline-block",lineHeight:"45px",margin:"0px",verticalAlign:"middle",position:"absolute" , top:"0px",left:"0px" , bottom:"0px",fontFamily:"Helvetica" , fontWeight:"200", fontSize:"9pt",paddingLeft:"10px" ,marginTop:"0px"}}>Playlist {this.props.index}</h3>
+                <h1 style={{color:((this.state.hovering || this.props.highlight) ? "white" : "black"),display:"inline-block",lineHeight:"45px",margin:"0px",verticalAlign:"middle",fontFamily:"Helvetica" , fontWeight:"200" ,whiteSpace:"nowrap",overflow:"hidden" , textOverflow:"ellipsis", fontSize:"9pt",position:"absolute",top:"0px",left:"100px",right:"50px",textAlign:"center"}}>{this.props.name}</h1>
+                <h1 onClick={this.play} style={{color: (!(this.state.hovering || this.props.highlight) ? this.props.color : "white") , borderLeft:"1px solid lightgray",paddingLeft:"10px",paddingRight:"10px",display:"inline-block",position:"absolute",right:"0px",lineHeight:"45px",margin:"0px",verticalAlign:"middle",fontFamily:"Helvetica" , fontWeight:"200", fontSize:"12pt"}}>▶</h1>
+                <h3 style={{color:((this.state.hovering || this.props.highlight) ? "white" : "gray"), background:"rgba(0,0,0,0.015)",textAlign:"center",width:"80px",borderRight:"1px solid "+ (this.state.hovering ? "white" : "lightgray"),display:"inline-block",lineHeight:"45px",margin:"0px",verticalAlign:"middle",position:"absolute" , top:"0px",left:"0px" , bottom:"0px",fontFamily:"Helvetica" , fontWeight:"200", fontSize:"9pt",paddingLeft:"10px" ,marginTop:"0px"}}>Playlist {this.props.index}</h3>
 
             </div>
         );
     },
     play(){
-        //var xurl = "http://52.49.190.175:8080/episode/" + this.props.url.replace(/\//g, '').replace("https://" , "");
-        //
-        //$.ajax({
-        //    method:"GET",
-        //    url: xurl,
-        //    dataType: 'JSON',
-        //    type: 'GET',
-        //    success:function(data){
-        //        var url = "http://52.49.190.175:8080/episodes/" + data.episodeFile;
-        //        if(window.audio == undefined) window.audio = new Audio();
-        //        //window.audio.preload = "none";
-        //        window.audio.src = url;
-        //        //window.audio.load();
-        //        window.audio.addEventListener('loadedmetadata', function() {
-        //            console.log(window.audio.duration);
-        //
-        //            window.audio.addEventListener("timeupdate" ,
-        //                function(data){
-        //                    //console.log(window.audio.duration);
-        //                    window.percentageChanged(window.audio.currentTime , window.audio.duration);
-        //                });
-        //            window.audio.play();
-        //        });
-        //    }
-        //
-        //});
-        //
-        //this.props.onPlay(this.props.text);
-        //window.episode = "Episode " + this.props.index;
+
 
     },
     mouseEnter:function(){
@@ -198,7 +193,7 @@ var MainPage = React.createClass({
             paddingTop:"10px"
         };
 
-        var items = (this.state.items || this.props.items).map((item,index) => <Episode clicked={this.episodeClicked} onPlay={this.onPlay} index={index+1} name={item.title} url={item.url} text={item.text} color={this.props.color}/>);
+        var items = (this.state.items || this.props.items).map((item,index) => <Episode highlight={window.selected == index+1} clicked={this.episodeClicked} onPlay={this.onPlay} index={index+1} name={item.title} url={item.url} text={item.text} color={this.props.color}/>);
 
         var menuItems = this.props.menuItems.map(
             (itemX , indexX) => {
@@ -280,11 +275,13 @@ var MainPage = React.createClass({
                 return {title:child.data.title , url:child.data.url , text : child.data.selftext};
             });
 
+
             window.subreddit = newSubrredit;
             this.setState({items : names})
         }.bind(this));
     },
     onPlay(item,index){
+        window.episode = index;
         console.log(item);
         var xurl = "http://52.49.190.175:8080/episode/" + item.url.replace("https://" , "").replace(/\//g, '').replace(/\?/g,"");
 
@@ -314,16 +311,18 @@ var MainPage = React.createClass({
         });
     },
     episodeClicked(index){
-                                window.selected = index;
+        window.selected = index;
         $.get(
             this.props.items[index].url + ".json",
             function(data){
                 var children = (data[1].data.children.slice(0,10).map((child) =>{return {html:child.data.body_html , url:"https://www.reddit.com/api/info.json?id=t1_" + child.data.id};}));
-                this.setState({comments:children});
+                this.setState({comments:children , items : this.state.items});
             }.bind(this)
         );
     }
 });
+
+window.subreddit = "WritingPrompts";
 
 
 var url ="https://www.reddit.com/r/WritingPrompts/top.json?sort=top&t=all&limit=15";
