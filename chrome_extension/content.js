@@ -18,7 +18,8 @@ function loadScript(url, callback) {
 
 function existsAtServer(url) {
   // make ajax query to server. 202 found, 404 not found
-  return true;
+  return 'http://example.com/';
+  // return null on not-extist
 }
 
 function main() {
@@ -27,22 +28,28 @@ function main() {
     
   if (/^(\/|)r\/[a-zA-Z0-9]*(\/|)$/.test(pos)) {
     // jquery all title elements
-    var ps = $( 'p' );
-    var titles = ps.filter( '.title' );
+    var titles = $( 'p' ).filter( '.title' );
 
     // get href from each 'a' element in class.
     titles.each(function() {
       var children = $(this).children();
       var links = children.filter( 'a' );
       var url = links.attr("href");
-      
-      if (exsistsAtServer(url)) {
-        annotateElement(link);
+      var sitelink = existsAtServer(url);
+      if (sitelink) {
+        // annotate elem
+        jQuery('<a/>', {
+              id: 'foo',
+              href: sitelink,
+              title: 'hey :P',
+              rel: 'external',
+              text: 'Play on CrowdCast'
+        }).appendTo($(this));
       }
+      return true;
     });
 
     // create element to be inserted
-  
     var node = document.createElement('div');
     node.style.position = 'fixed';
     node.style.top = 0;
