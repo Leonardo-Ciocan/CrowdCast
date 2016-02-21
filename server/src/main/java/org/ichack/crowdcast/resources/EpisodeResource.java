@@ -82,6 +82,10 @@ public class EpisodeResource {
         } catch (IOException | UnsupportedAudioFileException e) {
             return Response.status(500).entity(e.getMessage()).build();
         }
+        if (0 == episode.getDuration()) {
+            return Response.status(401).entity("Could not determine duration of uploaded file.").build();
+        }
+
         episode = episodeDAO.addOrUpdate(episode);
         if (null == episode) {
             return Response.status(500).build();

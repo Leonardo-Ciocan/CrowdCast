@@ -1,15 +1,15 @@
 package org.ichack.crowdcast.model;
 
 import org.ichack.crowdcast.resources.EpisodeResource;
+import org.jaudiotagger.audio.AudioFile;
+import org.jaudiotagger.audio.AudioFileIO;
 import org.tritonus.share.sampled.file.TAudioFileFormat;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.sound.sampled.AudioFileFormat;
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.UnsupportedAudioFileException;
+import javax.sound.sampled.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.Map;
@@ -64,6 +64,6 @@ public class Episode {
         String key = "duration";
         Long microseconds = (Long) properties.get(key);
         int milliseconds = (int) (microseconds / 1000);
-        setDuration(duration);
+        setDuration(milliseconds);
     }
 }
