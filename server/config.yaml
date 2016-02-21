@@ -8,6 +8,7 @@ server:
 assets:
   overrides:
     /episodes: src/main/resources/episodes/
+    /frontend: src/main/resources/frontend
 
 database:
   driverClass: com.mysql.jdbc.Driver

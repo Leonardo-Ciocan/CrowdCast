@@ -25,6 +25,7 @@ public class CrowdcastApplication extends Application<CrowdcastConfiguration>{
     public void initialize(Bootstrap<CrowdcastConfiguration> bootstrap) {
         bootstrap.addBundle(hibernateBundle);
         bootstrap.addBundle(new ConfiguredAssetsBundle("/episodes", "/episodes", "", "Episode assets"));
+        bootstrap.addBundle(new ConfiguredAssetsBundle("/frontend", "/frontend", "", "Frontend assets"));
     }
 
     @Override
