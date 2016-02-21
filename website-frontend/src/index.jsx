@@ -109,41 +109,41 @@ var Episode = React.createClass({
 
                 <h1 style={{color:(this.state.hovering ? "white" : "black"),display:"inline-block",lineHeight:"45px",margin:"0px",verticalAlign:"middle",fontFamily:"Helvetica" , fontWeight:"200" ,whiteSpace:"nowrap",overflow:"hidden" , textOverflow:"ellipsis", fontSize:"9pt",position:"absolute",top:"0px",left:"100px",right:"50px",textAlign:"center"}}>{this.props.name}</h1>
                 <h1 onClick={this.play} style={{color: (!this.state.hovering ? this.props.color : "white") , borderLeft:"1px solid lightgray",paddingLeft:"10px",paddingRight:"10px",display:"inline-block",position:"absolute",right:"0px",lineHeight:"45px",margin:"0px",verticalAlign:"middle",fontFamily:"Helvetica" , fontWeight:"200", fontSize:"12pt"}}>▶</h1>
-                <h3 style={{color:(this.state.hovering ? "white" : "gray"), background:"rgba(0,0,0,0.015)",textAlign:"center",width:"80px",borderRight:"1px solid "+ (this.state.hovering ? "white" : "lightgray"),display:"inline-block",lineHeight:"45px",margin:"0px",verticalAlign:"middle",position:"absolute" , top:"0px",left:"0px" , bottom:"50%",fontFamily:"Helvetica" , fontWeight:"200", fontSize:"9pt",paddingLeft:"10px" ,marginTop:"0px"}}>Episode {this.props.index}</h3>
+                <h3 style={{color:(this.state.hovering ? "white" : "gray"), background:"rgba(0,0,0,0.015)",textAlign:"center",width:"80px",borderRight:"1px solid "+ (this.state.hovering ? "white" : "lightgray"),display:"inline-block",lineHeight:"45px",margin:"0px",verticalAlign:"middle",position:"absolute" , top:"0px",left:"0px" , bottom:"0px",fontFamily:"Helvetica" , fontWeight:"200", fontSize:"9pt",paddingLeft:"10px" ,marginTop:"0px"}}>Playlist {this.props.index}</h3>
 
             </div>
         );
     },
     play(){
-        var xurl = "http://52.49.190.175:8080/episode/" + this.props.url.replace(/\//g, '').replace("https://" , "");
-
-        $.ajax({
-            method:"GET",
-            url: xurl,
-            dataType: 'JSON',
-            type: 'GET',
-            success:function(data){
-                var url = "http://52.49.190.175:8080/episodes/" + data.episodeFile;
-                if(window.audio == undefined) window.audio = new Audio();
-                //window.audio.preload = "none";
-                window.audio.src = url;
-                //window.audio.load();
-                window.audio.addEventListener('loadedmetadata', function() {
-                    console.log(window.audio.duration);
-
-                    window.audio.addEventListener("timeupdate" ,
-                        function(data){
-                            //console.log(window.audio.duration);
-                            window.percentageChanged(window.audio.currentTime , window.audio.duration);
-                        });
-                    window.audio.play();
-                });
-            }
-
-        });
-
-        this.props.onPlay(this.props.text);
-        window.episode = "Episode " + this.props.index;
+        //var xurl = "http://52.49.190.175:8080/episode/" + this.props.url.replace(/\//g, '').replace("https://" , "");
+        //
+        //$.ajax({
+        //    method:"GET",
+        //    url: xurl,
+        //    dataType: 'JSON',
+        //    type: 'GET',
+        //    success:function(data){
+        //        var url = "http://52.49.190.175:8080/episodes/" + data.episodeFile;
+        //        if(window.audio == undefined) window.audio = new Audio();
+        //        //window.audio.preload = "none";
+        //        window.audio.src = url;
+        //        //window.audio.load();
+        //        window.audio.addEventListener('loadedmetadata', function() {
+        //            console.log(window.audio.duration);
+        //
+        //            window.audio.addEventListener("timeupdate" ,
+        //                function(data){
+        //                    //console.log(window.audio.duration);
+        //                    window.percentageChanged(window.audio.currentTime , window.audio.duration);
+        //                });
+        //            window.audio.play();
+        //        });
+        //    }
+        //
+        //});
+        //
+        //this.props.onPlay(this.props.text);
+        //window.episode = "Episode " + this.props.index;
 
     },
     mouseEnter:function(){
@@ -165,16 +165,17 @@ var MainPage = React.createClass({
 
         var style = {
             left:"300px",
-            top:"0px",
+            top:"60px",
             bottom:"0px",
             right:"420px",
-            position:"absolute",
+            position:"fixed",
+            overflow:"scroll",
             padding:"20px"
         };
 
         var leftStyle = {
             width:"280px",
-            position:"absolute",
+            position:"fixed",
             top:"55px",
             left:"0px",
             background:"#fafafa",
@@ -186,7 +187,8 @@ var MainPage = React.createClass({
 
         var rightStyle = {
             width:"400px",
-            position:"absolute",
+            position:"fixed",
+            overflow:"scroll",
             top:"55px",
             right:"0px",
             background:"#fafafa",
@@ -214,18 +216,26 @@ var MainPage = React.createClass({
         );
 
         var comments = this.state.comments.map(
-            (comment)=>{
-                console.log(comment.html);
-                return comment.html == undefined? <div></div> : <div dangerouslySetInnerHTML={{__html:comment.html.replace(/&amp;/g, "&")
+            (comment,index)=>{
+                return comment.html == undefined? <div></div> :
+                    <div className="mdx">
+
+                        <div style={{height:"45px" , background:"rgba(0,0,0,0.03)",borderBottom:"1px solid lightgray",
+                        margin:"-15px",marginBottom:"10px",paddingRight:"10px",paddingLeft:"10px"}}>
+                            <span style={{float:"left",textAlign:"right" ,lineHeight:"45px",verticalAlign:"middle", color:"Black"}}>Episode {index+1}</span>
+                            <span  onClick={function(){this.onPlay(comment,index)}.bind(this)} style={{ cursor:"pointer",float:"right",textAlign:"right" ,lineHeight:"45px",verticalAlign:"middle", color:this.props.color}}>Play this episode ▶</span>
+
+                        </div>
+                        <div dangerouslySetInnerHTML={{__html:comment.html.replace(/&amp;/g, "&")
         .replace(/&lt;/g, "<")
         .replace(/&gt;/g, ">")
         .replace(/&quot;/g, "\"")
         .replace(/&#039;/g, "'")}}>
+                    </div>
                        </div>
             }
         );
 
-        console.log(comments);
 
         return (
                 <div>
@@ -238,17 +248,22 @@ var MainPage = React.createClass({
 
                     <div style={rightStyle}>
                         <h3 style={{color:"gray" , textAlign:"center", fontFamily:"Helvetica" ,
-                        fontWeight:"bold", fontSize:"18pt",marginLeft:"10px" ,marginTop:"20px"}}>PREVIEW</h3>
+                        fontWeight:"bold", fontSize:"18pt",marginLeft:"10px" ,marginTop:"20px"}}>PLAYLIST EPISODES</h3>
+                        <h3 style={{color:"gray" , textAlign:"center", fontFamily:"Helvetica" ,
+                        fontWeight:"200", fontSize:"13pt",marginLeft:"10px" ,marginTop:"20px"}}>{ window.selected != undefined ?this.state.items[window.selected].title : ""}</h3>
+                        <h3 style={{color:"gray" , textAlign:"center", fontFamily:"Helvetica" ,
+                        fontWeight:"200", fontSize:"10pt",marginLeft:"10px" ,marginTop:"20px"}}>{ window.selected != undefined ?this.state.items[window.selected].text : ""}</h3>
                         {comments}
                     </div>
+                    <Header color={this.props.color}/>
+
                     <div style={style}>
-                        <Header color={this.props.color}/>
-                        <div style={{marginTop:"60px"}}>
+                        <div>
                             <h1 style={{textAlign:"center", fontFamily:"Helvetica" , fontWeight:"200",
                             fontSize:"25pt",margin:"10px" ,marginBottom:"5px"}}>{this.props.menuItems[this.state.selected[1]].data[this.state.selected[0]]}</h1>
 
                             <h3 style={{textAlign:"center",fontFamily:"Helvetica" , fontWeight:"200",
-                             fontSize:"15pt",marginLeft:"10px" ,marginTop:"0px"}}>{this.props.items.length} episodes</h3>
+                             fontSize:"15pt",marginLeft:"10px" ,marginTop:"0px"}}>{this.props.items.length} playlists</h3>
                         </div>
 
                         {items}
@@ -265,21 +280,45 @@ var MainPage = React.createClass({
                 return {title:child.data.title , url:child.data.url , text : child.data.selftext};
             });
 
-
             window.subreddit = newSubrredit;
             this.setState({items : names})
         }.bind(this));
     },
-    onPlay(item){
+    onPlay(item,index){
         console.log(item);
-        this.setState({text:item});
+        var xurl = "http://52.49.190.175:8080/episode/" + item.url.replace("https://" , "").replace(/\//g, '').replace(/\?/g,"");
+
+        $.ajax({
+            method:"GET",
+            url: xurl,
+            dataType: 'JSON',
+            type: 'GET',
+            success:function(data){
+                var url = "http://52.49.190.175:8080/episodes/" + data.episodeFile;
+                window.audio = new Audio();
+                //window.audio.preload = "none";
+                window.audio.src = url;
+                //window.audio.load();
+                window.audio.addEventListener('loadedmetadata', function() {
+                    console.log(window.audio.duration);
+
+                    window.audio.addEventListener("timeupdate" ,
+                        function(data){
+                            //console.log(window.audio.duration);
+                            window.percentageChanged(window.audio.currentTime , window.audio.duration);
+                        });
+                    window.audio.play();
+                });
+            }
+
+        });
     },
     episodeClicked(index){
-        console.log("getting " + index);
+                                window.selected = index;
         $.get(
             this.props.items[index].url + ".json",
             function(data){
-                var children = (data[1].data.children.map((child) =>{return {html:child.data.body_html , url:"https://www.reddit.com/api/info.json?id=t1_" + child.data.id};}));
+                var children = (data[1].data.children.slice(0,10).map((child) =>{return {html:child.data.body_html , url:"https://www.reddit.com/api/info.json?id=t1_" + child.data.id};}));
                 this.setState({comments:children});
             }.bind(this)
         );
