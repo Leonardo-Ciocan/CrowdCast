@@ -38,6 +38,14 @@ public class JobResource {
 
         try {
             Process process = new ProcessBuilder(PYTHON_INTERPRETER, PYTHON_TEXT_TO_SPEECH, "--job", jsonFile.getAbsolutePath()).start();
+            InputStream stderr = process.getErrorStream();
+            InputStreamReader isr = new InputStreamReader(stderr);
+            BufferedReader br = new BufferedReader(isr);
+            String line = null;
+            System.out.println("<ERROR>");
+            while ( (line = br.readLine()) != null)
+                System.out.println(line);
+            System.out.println("</ERROR>");
             int exitVal = process.waitFor();
             if (exitVal != 0) {
                 return Response.status(500).entity("Python script exited with status " + exitVal).build();
