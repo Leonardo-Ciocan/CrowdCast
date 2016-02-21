@@ -25,7 +25,7 @@ public class JobResource {
         ObjectMapper mapper = new ObjectMapper();
         String randId = UUID.randomUUID().toString();
         File jsonFile = new File(randId + ".json");
-        File mp3File = new File(EpisodeResource.resourcePath + "/ " + randId + ".mp3");
+        File mp3File = new File(EpisodeResource.resourcePath + "/" + randId + ".mp3");
         if (job.getMp3file() == null || job.getMp3file().isEmpty()) {
             job.setMp3file(mp3File.getAbsolutePath());
         }
